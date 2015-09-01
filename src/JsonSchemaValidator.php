@@ -3,10 +3,16 @@ namespace dstotijn\yii2jsv;
 
 use JsonSchema\Uri\UriRetriever;
 use JsonSchema\Validator as JSValidator;
+use Yii;
+use yii\base\InvalidConfigException;
 use yii\validators\Validator;
 
 /**
- * Class JsonSchemaValidator
+ * JsonSchemaValidator validates a value against a JSON Schema file.
+ *
+ * The URI of the schema file must be defined via the [[schema]] property.
+ *
+ * @author David Stotijn <dstotijn@gmail.com>
  */
 class JsonSchemaValidator extends Validator
 {
@@ -14,6 +20,26 @@ class JsonSchemaValidator extends Validator
      * @var string The URI of the JSON schema file.
      */
     public $schema;
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+
+        if (empty($this->schema)) {
+            throw new InvalidConfigException('The "schema" property must be set.');
+        }
+
+        if (!is_string($this->schema)) {
+            throw new InvalidConfigException('The "schema" property must be a string.');
+        }
+
+        if ($this->message === null) {
+            $this->message = Yii::t('app', '{property}: {message}.');
+        }
+    }
 
     /**
      * @inheritdoc
@@ -30,7 +56,15 @@ class JsonSchemaValidator extends Validator
 
         if (!$validator->isValid()) {
             foreach ($validator->getErrors() as $error) {
-                $this->addError($model, $attribute, sprintf("%s: %s.", $error['property'], $error['message']));
+                $this->addError(
+                    $model,
+                    $attribute,
+                    $this->message,
+                    [
+                        'property' => $error['property'],
+                        'message' => ucfirst($error['message']),
+                    ]
+                );
             }
         }
     }
@@ -50,7 +84,7 @@ class JsonSchemaValidator extends Validator
 
         if (!$validator->isValid()) {
             $error = reset($validator->getErrors());
-            return ['{property}: {message}.', ['property' => $error['property'], 'message' => $error['message']]];
+            return [$this->message, ['property' => $error['property'], 'message' => ucfirst($error['message'])]];
         }
 
         return null;
