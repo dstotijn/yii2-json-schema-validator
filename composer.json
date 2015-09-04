@@ -23,6 +23,10 @@
         "codeception/codeception": "2.0.*"
     },
     "autoload": {
-        "psr-4": {"dstotijn\\yii2jsv\\tests\\": "tests/", "dstotijn\\yii2jsv\\": "src/"}
+        "psr-4": {
+            "dstotijn\\yii2jsv\\": "src/",
+            "dstotijn\\yii2jsv\\tests\\": "tests/",
+            "dstotijn\\yii2jsv\\tests\\data\\models\\": "tests/data/models/"
+        }
     }
 }
