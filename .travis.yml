@@ -1,0 +1,26 @@
+language: php
+
+php:
+  - 5.6
+  - 5.5
+  - 5.4
+
+install:
+  - travis_retry composer self-update
+  - travis_retry composer global require "fxp/composer-asset-plugin:1.0.*"
+  - travis_retry composer global require "codeception/codeception:2.0.*"
+  - travis_retry composer install --no-interaction --prefer-dist
+
+before_script:
+  - cd tests
+  - ~/.composer/vendor/bin/codecept build
+
+script:
+  - ~/.composer/vendor/bin/codecept run --coverage-html --coverage-xml
+
+after_script:
+  - php ../vendor/bin/ocular code-coverage:upload --format=php-clover codeception/_output/coverage.xml
+
+after_failure:
+  - cat codeception/_app/runtime/logs/*
+  - cat codeception/_output/*
