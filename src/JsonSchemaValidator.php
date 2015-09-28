@@ -114,7 +114,10 @@ class JsonSchemaValidator extends Validator
     }
 
     /**
-     * @inheritdoc
+     * Validates a value.
+     *
+     * @param string $value A JSON encoded string to validate.
+     * @return array|null An array of error data, or null if the data is valid.
      */
     protected function validateValue($value)
     {
