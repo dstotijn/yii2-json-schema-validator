@@ -137,7 +137,8 @@ class JsonSchemaValidator extends Validator
         $validator->check($value, $schema);
 
         if (!$validator->isValid()) {
-            $error = reset($validator->getErrors());
+            $errors = $validator->getErrors();
+            $error = reset($errors);
             return [$this->message, ['property' => $error['property'], 'message' => ucfirst($error['message'])]];
         }
 
