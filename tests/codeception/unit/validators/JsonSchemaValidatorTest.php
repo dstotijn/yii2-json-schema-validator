@@ -4,6 +4,7 @@ namespace tests\codeception\unit\models;
 
 use dstotijn\yii2jsv\JsonSchemaValidator;
 use dstotijn\yii2jsv\tests\data\models\Car;
+use dstotijn\yii2jsv\tests\data\models\CarWithBadSchema;
 use dstotijn\yii2jsv\tests\data\models\CarWithoutSchema;
 use yii\codeception\TestCase;
 
@@ -31,6 +32,13 @@ class JsonSchemaValidatorTest extends TestCase
     {
         $this->setExpectedException('yii\base\InvalidConfigException', 'The "schema" property must be set.');
         $val = new JsonSchemaValidator;
+        $val->validate('foobar');
+    }
+
+    public function testValidateValueSchemaNotStringInvalidConfigException()
+    {
+        $this->setExpectedException('yii\base\InvalidConfigException', 'The "schema" property must be a a string.');
+        $val = new JsonSchemaValidator(['schema' => true]);
         $val->validate('foobar');
     }
 
@@ -73,6 +81,13 @@ class JsonSchemaValidatorTest extends TestCase
     {
         $this->setExpectedException('yii\base\InvalidConfigException', 'The "schema" property must be set.');
         $car = new CarWithoutSchema();
+        $car->validate();
+    }
+
+    public function testValidateAttributeSchemaNotStringInvalidConfigException()
+    {
+        $this->setExpectedException('yii\base\InvalidConfigException', 'The "schema" property must be a a string.');
+        $car = new CarWithBadSchema();
         $car->validate();
     }
 

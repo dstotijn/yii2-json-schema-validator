@@ -3,24 +3,40 @@ language: php
 sudo: false
 
 php:
+  - nightly
+  - hhvm
+  - 7.0
   - 5.6
   - 5.5
   - 5.4
 
+matrix:
+  allow_failures:
+    - php: nightly
+
 install:
   - travis_retry composer self-update
-  - travis_retry composer global require "fxp/composer-asset-plugin"
-  - travis_retry composer install --no-interaction --prefer-dist
+  - travis_retry composer global require 'fxp/composer-asset-plugin'
+  - travis_retry composer update --no-interaction --prefer-dist
+  - |
+      COVERAGE_PHP_VERSION='5.6'
 
 before_script:
   - cd tests
   - ../vendor/bin/codecept build
+  - |
+      if [ $TRAVIS_PHP_VERSION = $COVERAGE_PHP_VERSION ]; then
+          CODECEPT_FLAGS='--coverage-html --coverage-xml'
+      fi
 
 script:
-  - ../vendor/bin/codecept run --coverage-html --coverage-xml
+  - ../vendor/bin/codecept run $CODECEPT_FLAGS
 
 after_script:
-  - php ../vendor/bin/ocular code-coverage:upload --format=php-clover codeception/_output/coverage.xml
+  - |
+      if [ $TRAVIS_PHP_VERSION = $COVERAGE_PHP_VERSION ]; then
+          php ../vendor/bin/ocular code-coverage:upload --format=php-clover codeception/_output/coverage.xml
+      fi
 
 after_failure:
   - cat codeception/_app/runtime/logs/*
