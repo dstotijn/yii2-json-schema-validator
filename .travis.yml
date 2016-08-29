@@ -16,7 +16,7 @@ matrix:
 
 install:
   - travis_retry composer self-update
-  - travis_retry composer global require "fxp/composer-asset-plugin"
+  - travis_retry composer global require 'fxp/composer-asset-plugin'
   - travis_retry composer install --no-interaction --prefer-dist
   - |
       COVERAGE_PHP_VERSION='5.6'
