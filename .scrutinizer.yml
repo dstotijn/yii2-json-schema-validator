@@ -1,6 +1,5 @@
 before_commands:
   - composer self-update
-  - composer global require 'fxp/composer-asset-plugin'
   - composer install --no-interaction --prefer-source
 
 checks:
